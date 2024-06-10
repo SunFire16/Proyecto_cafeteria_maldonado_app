@@ -1,12 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Asegúrate de tener este import
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
 
   Future<bool> isAdmin(String userId) async {
   DocumentSnapshot userData = await FirebaseFirestore.instance
@@ -15,6 +16,32 @@ class AuthService {
     .get();
   return userData['isAdmin'] ?? false;
 }
+
+  Future<Map<String, dynamic>> getUserData(String userId) async {
+    try {
+      final userData =
+          await _usersCollection.doc(userId).get().then((doc) => doc.data());
+      return userData as Map<String, dynamic>;
+    } catch (e) {
+      print('Error al obtener los datos del usuario: $e');
+      return {};
+    }
+  }
+
+  Future<void> updateUserData(String userId,
+      {String? firstName, String? lastName, String? phone, String? email}) async {
+    try {
+      await _usersCollection.doc(userId).update({
+        'firstName': firstName,
+        'lastName': lastName,
+        'phoneNumber': phone,
+        'email': email,
+      });
+    } catch (e) {
+      print('Error al actualizar los datos del usuario: $e');
+    }
+  }
+
 
   Future<User?> registerAsClientWithEmailAndPassword(
     String email, String password, String name, String surname, String phone) async {
@@ -42,17 +69,15 @@ class AuthService {
 
   Future<bool> doesEmailExist(String email) async {
     try {
-      // Realizar una consulta a Firestore para buscar un documento con el correo proporcionado
       QuerySnapshot querySnapshot = await _firestore
           .collection('users')
           .where('email', isEqualTo: email)
           .get();
 
-      // Si la consulta devuelve algún resultado, significa que el correo existe
       return querySnapshot.docs.isNotEmpty;
     } catch (e) {
       print('Error al verificar el correo electrónico: $e');
-      return false; // Manejar cualquier error y devolver falso
+      return false;
     }
   }
 

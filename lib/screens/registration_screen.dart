@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cafeteriamaldonado_app_2/services/auth_service.dart';
 import 'home_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Importa esta librería
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -117,7 +117,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       MaterialPageRoute(builder: (context) => const HomeScreen()),
     );
   } else {
-    // Handle registration error
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Fallo al registrarse')),
     );
@@ -160,7 +159,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               const SizedBox(height: 10),
               TextField(
                 controller: _phoneController,
-                keyboardType: TextInputType.number, // Mostrar teclado numérico
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: 'Número de teléfono',
                   border: OutlineInputBorder(),

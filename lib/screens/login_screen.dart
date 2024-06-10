@@ -59,8 +59,7 @@ class LoginScreen extends StatelessWidget {
                 if (user != null) {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const HomeScreen()));
-                } else {
-                  // Handle login error
+                } else {                  
                   print('Error al iniciar sesión con Google');
                 }
               },
@@ -84,7 +83,6 @@ class LoginScreen extends StatelessWidget {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const HomeScreen()));
                 } else {
-                  // Handle login error
                   print('Error al iniciar sesión con Facebook');
                 }
               },

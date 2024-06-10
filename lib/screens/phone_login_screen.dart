@@ -55,7 +55,6 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                   if (user != null) {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const HomeScreen()));
                   } else {
-                    // Handle login error
                     print('Error al iniciar sesión con celular');
                   }
                 } else {

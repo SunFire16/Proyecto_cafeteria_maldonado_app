@@ -14,12 +14,11 @@ class MasScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const AddInfoScreen()),
+                  MaterialPageRoute(builder: (context) => const ModifyProfileScreen()),
                 );
               },
-              child: Text('Agregar Información del Cliente'),
+              child: Text('Modificar perfil'),
             ),
-            // Otros botones o funcionalidades de la pestaña 'Más'
           ],
         ),
       ),

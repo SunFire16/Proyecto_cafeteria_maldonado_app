@@ -82,22 +82,27 @@ class _HomeScreenState extends State<HomeScreen> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home, color: Colors.black),
+            activeIcon: Icon(Icons.home, color: Colors.amber),
             label: 'Inicio',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.menu, color: Colors.black),
+            activeIcon: Icon(Icons.menu, color: Colors.amber),
             label: 'Menú',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart, color: Colors.black),
+            activeIcon: Icon(Icons.shopping_cart, color: Colors.amber),
             label: 'Mi Pedido',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.local_offer, color: Colors.black),
+            activeIcon: Icon(Icons.local_offer, color: Colors.amber),
             label: 'Ofertas',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.more_horiz, color: Colors.black),
+            activeIcon: Icon(Icons.more_horiz, color: Colors.amber),
             label: 'Más',
           ),
         ],
@@ -134,7 +139,7 @@ class HomeContentScreen extends StatelessWidget {
                     'Bienvenido, $userName',
                     style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  // Aquí puedes agregar más widgets para mostrar información o funcionalidades adicionales
+                  
                 ],
               );
             } else {
