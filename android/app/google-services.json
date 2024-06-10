@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "893208786197",
+    "project_id": "app-cafeteria-maldonado",
+    "storage_bucket": "app-cafeteria-maldonado.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893208786197:android:3f7eefab3d8de1f428651c",
+        "android_client_info": {
+          "package_name": "com.example.cafeteriamaldonado_app_2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "893208786197-6qtrffviq35vf9socqtrocmbrkei0tmh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cafeteriamaldonado.app",
+            "certificate_hash": "566e347c89534cbe87ace5c2c626a0fce6f918d2"
+          }
+        },
+        {
+          "client_id": "893208786197-gbd6vie55non81uv9beu4huailphovpn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnpj6vvMTpmVGEwoQH42Pof82h-W5Q9c0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "893208786197-gbd6vie55non81uv9beu4huailphovpn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "893208786197-qj9cc6u902ldvqctq3mf6io0rp38ecns.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.cafeteriamaldonadoApp2"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
