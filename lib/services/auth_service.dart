@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+//import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
+
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -131,13 +132,12 @@ class AuthService {
     }
   }
 
-  Future<User?> signInWithFacebook() async {
+  /*Future<User?> signInWithFacebook() async {
     try {
       final LoginResult result = await FacebookAuth.instance.login();
       if (result.status == LoginStatus.success) {
         final AccessToken accessToken = result.accessToken!;
         final OAuthCredential credential = FacebookAuthProvider.credential(accessToken.token);
-
         final UserCredential authResult = await _auth.signInWithCredential(credential);
         return authResult.user;
       } else {
@@ -149,7 +149,7 @@ class AuthService {
       print(e.toString());
       return null;
     }
-  }
+  }*/
 
   Future<String?> verifyPhoneNumber(String phoneNumber) async {
     Completer<String> completer = Completer<String>();

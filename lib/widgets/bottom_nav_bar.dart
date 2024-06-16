@@ -1,8 +1,8 @@
-import 'package:cafeteriamaldonado_app_2/screens/ofertas_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
 import '../screens/menu_screen.dart';
 import '../screens/mi_pedido_screen.dart';
+import '../screens/my_orders.dart';
 import '../screens/mas_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -18,7 +18,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     const HomeScreen(),
     const MenuScreen(),
     const MiPedidoScreen(),
-    const OfertasScreen(),
+    const MyOrdersScreen(),
     const MasScreen(),
   ];
 
@@ -47,8 +47,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
             label: 'Mi Pedido',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_offer),
-            label: 'Ofertas',
+            icon: Icon(Icons.list),
+            label: 'Mis pedidos',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.more_horiz),

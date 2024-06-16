@@ -5,6 +5,7 @@ import 'phone_login_screen.dart';
 import 'home_screen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -19,13 +20,11 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // Logo de la empresa
             Image.asset(
               'assets/logo.png',
               height: 300,
             ),
             const SizedBox(height: 50),
-            // Botón de inicio de sesión con correo
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
@@ -42,11 +41,10 @@ class LoginScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 10),
-            // Botón de inicio de sesión con Google
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
+                foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
@@ -65,7 +63,7 @@ class LoginScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 10),
-            // Botón de inicio de sesión con Facebook
+            /* Botón de inicio de sesión con Facebook
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
@@ -87,7 +85,7 @@ class LoginScreen extends StatelessWidget {
                 }
               },
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 10),*/
             // Botón de inicio de sesión con número de celular
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
