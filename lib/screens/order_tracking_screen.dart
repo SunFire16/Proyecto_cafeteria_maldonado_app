@@ -44,9 +44,6 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Seguimiento de Pedidos'),
-      ),
       body: Column(
         children: [
           Padding(

@@ -19,7 +19,6 @@ class PaymentScreen extends StatelessWidget {
               title: const Text('Efectivo al momento de la entrega'),
               leading: const Icon(Icons.money),
               onTap: () {
-                // Implementa la lógica para pagar en efectivo
               },
             ),
             ListTile(

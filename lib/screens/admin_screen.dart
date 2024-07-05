@@ -86,27 +86,27 @@ class _AdminScreenState extends State<AdminScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.black),
+            icon: Icon(Icons.home, color: Colors.white),
             activeIcon: Icon(Icons.home, color: Colors.amber),
             label: 'Inicio',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.inventory, color: Colors.black),
+            icon: Icon(Icons.inventory, color: Colors.white),
             activeIcon: Icon(Icons.inventory, color: Colors.amber),
             label: 'Inventario',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart, color: Colors.black),
+            icon: Icon(Icons.bar_chart, color: Colors.white),
             activeIcon: Icon(Icons.bar_chart, color: Colors.amber),
             label: 'Reportes',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings, color: Colors.black),
+            icon: Icon(Icons.settings, color: Colors.white),
             activeIcon: Icon(Icons.settings, color: Colors.amber),
             label: 'Configuraciones',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_shipping, color: Colors.black),
+            icon: Icon(Icons.local_shipping, color: Colors.white),
             activeIcon: Icon(Icons.local_shipping, color: Colors.amber),
             label: 'Pedidos',
           ),

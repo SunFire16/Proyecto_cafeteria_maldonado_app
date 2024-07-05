@@ -21,12 +21,19 @@ class CartProvider with ChangeNotifier {
   }
 
   double get totalPrice => _items.fold(0, (total, item) {
-    double variantPrice = item.product.variants.firstWhere(
-      (variant) => variant.name == item.variant, 
-      orElse: () => Variant(name: 'default', price: item.product.price, inventory: 0)
-    ).price;
+    double variantPrice = item.variant.isNotEmpty ? item.product.variants.firstWhere(
+      (variant) => variant.name == item.variant,
+      orElse: () => Variant(name: 'default', price: 0, inventory: 0)
+    ).price : 0;
+
     double modifiersPrice = item.modifiers.fold(0, (sum, modifier) => sum + modifier.price);
-    return total + (item.product.price + variantPrice + modifiersPrice) * item.quantity;
+
+    double itemBasePrice = variantPrice + modifiersPrice;
+    if (itemBasePrice == 0) {
+      itemBasePrice = item.product.price;
+    }
+
+    return total + (itemBasePrice * item.quantity);
   });
 
   double get loyaltyPoints {
@@ -54,7 +61,7 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-    void clearCart() {
+  void clearCart() {
     _items.clear();
     notifyListeners();
   }

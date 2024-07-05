@@ -98,7 +98,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return;
   }
 
-  // Verificar si el correo electrónico ya existe en la base de datos
   final bool emailExists = await _auth.doesEmailExist(email);
   if (emailExists) {
     ScaffoldMessenger.of(context).showSnackBar(

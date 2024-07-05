@@ -3,7 +3,7 @@ import 'package:cafeteriamaldonado_app_2/models/product_model.dart';
 import 'package:cafeteriamaldonado_app_2/services/firebase_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart'; // Importa image_cropper para recorte de imágenes
+import 'package:image_cropper/image_cropper.dart';
 import 'dart:io';
 
 class AddProductScreen extends StatefulWidget {
@@ -24,7 +24,7 @@ class _AddProductScreenState extends State<AddProductScreen> with AutomaticKeepA
     category: '',
     price: 0.0,
     variants: [],
-    modifierGroups: [], // Inicializamos sin grupos de modificadores
+    modifierGroups: [],
   );
 
   TextEditingController variantNameController = TextEditingController();

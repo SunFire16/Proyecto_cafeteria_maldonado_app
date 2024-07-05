@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cafeteriamaldonado_app_2/providers/cart_provider.dart';
 import 'order_summary_screen.dart';
+import 'package:cafeteriamaldonado_app_2/models/product_model.dart';
 
 class MiPedidoScreen extends StatelessWidget {
   const MiPedidoScreen({Key? key}) : super(key: key);
@@ -24,10 +25,39 @@ class MiPedidoScreen extends StatelessWidget {
             itemCount: cartProvider.items.length,
             itemBuilder: (context, index) {
               var cartItem = cartProvider.items[index];
+
+              double variantPrice = 0.0;
+              if (cartItem.variant.isNotEmpty) {
+                variantPrice = cartItem.product.variants
+                    .firstWhere(
+                      (variant) => variant.name == cartItem.variant,
+                      orElse: () => Variant(name: '', price: 0.0, inventory: 0),
+                    )
+                    .price;
+              }
+
+              double modifiersPrice = cartItem.modifiers.fold(
+                0.0,
+                (sum, modifier) => sum + modifier.price,
+              );
+
+              double itemTotalPrice = (cartItem.product.price + variantPrice + modifiersPrice) * cartItem.quantity;
+
               return ListTile(
                 title: Text(cartItem.product.name),
-                subtitle: Text(
-                  'Variante: ${cartItem.variant}\nModificadores: ${cartItem.modifiers.map((modifier) => modifier.name).join(', ')}\nComentarios: ${cartItem.comments}\nCantidad: ${cartItem.quantity}',
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (cartItem.variant.isNotEmpty)
+                      Text('Variante: ${cartItem.variant}'),
+                    if (cartItem.modifiers.isNotEmpty)
+                      Text('Modificadores: ${cartItem.modifiers.map((modifier) => modifier.name).join(', ')}'),
+                    if (cartItem.comments.isNotEmpty)
+                      Text('Comentarios: ${cartItem.comments}'),
+                    Text('Cantidad: ${cartItem.quantity}'),
+                    Text('Precio unitario: L. ${(cartItem.product.price + variantPrice + modifiersPrice).toStringAsFixed(2)}'),
+                    Text('Total: L. ${itemTotalPrice.toStringAsFixed(2)}'),
+                  ],
                 ),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),

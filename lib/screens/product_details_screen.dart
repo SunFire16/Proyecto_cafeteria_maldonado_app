@@ -18,7 +18,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   List<String> _selectedModifiers = [];
   TextEditingController _commentsController = TextEditingController();
   ValueNotifier<double> _totalPrice = ValueNotifier<double>(0.0);
-  ValueNotifier<int> _quantity = ValueNotifier<int>(1); // Added for quantity
+  ValueNotifier<int> _quantity = ValueNotifier<int>(1);
   Product? _product;
 
   @override
@@ -30,7 +30,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance.collection('products').doc(widget.productId).get(),
         builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState ==ConnectionState.waiting) {
             return const CircularProgressIndicator();
           }
 
@@ -51,10 +51,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           }
 
           void _updateTotalPrice() {
-            double variantPrice = product.variants.firstWhere(
-              (variant) => variant.name == _selectedVariant,
-              orElse: () => Variant(name: '', price: 0.0),
-            ).price;
+            double basePrice = product.price;
+
+            double variantPrice = 0.0;
+            if (_selectedVariant.isNotEmpty) {
+              variantPrice = product.variants.firstWhere(
+                (variant) => variant.name == _selectedVariant,
+                orElse: () => Variant(name: '', price: 0.0, inventory: 0),
+              ).price;
+            }
 
             double modifiersPrice = _selectedModifiers.fold(0.0, (sum, modifierName) {
               for (var group in product.modifierGroups) {
@@ -67,7 +72,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               return sum;
             });
 
-            _totalPrice.value = (product.price + variantPrice + modifiersPrice) * _quantity.value;
+            _totalPrice.value = basePrice;
+            if (_selectedVariant.isNotEmpty || _selectedModifiers.isNotEmpty) {
+              _totalPrice.value += variantPrice + modifiersPrice;
+            }
+            _totalPrice.value *= _quantity.value;
           }
 
           return ListView(
@@ -82,10 +91,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              if (product.price == 0.0) ...[
-                Text('Desde L. ${product.variants.isNotEmpty ? product.variants.map((v) => v.price).reduce((a, b) => a < b ? a : b).toStringAsFixed(2) : '0.00'}', style: const TextStyle(fontSize: 20)),
+              if (product.price == 0.0 && product.variants.isNotEmpty) ...[
+                Text('Desde L. ${product.variants.map((v) => v.price).reduce((a, b) => a < b ? a : b).toStringAsFixed(2)}', style: const TextStyle(fontSize: 20)),
               ] else ...[
-                Text('L. ${data['price']}', style: const TextStyle(fontSize: 20)),
+                Text('L. ${product.price.toStringAsFixed(2)}', style: const TextStyle(fontSize: 20)),
               ],
               const SizedBox(height: 8),
               Text(data['details'] ?? ''),
@@ -120,7 +129,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   children: product.modifierGroups.map((group) {
                     return ExpansionTile(
                       title: Text(group.name),
-                      initiallyExpanded: true, // Mostrar expandido por defecto
+                      initiallyExpanded: true,
                       children: group.modifiers.map((modifier) {
                         return StatefulBuilder(
                           builder: (BuildContext context, StateSetter setState) {

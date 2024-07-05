@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:cafeteriamaldonado_app_2/providers/cart_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cafeteriamaldonado_app_2/models/product_model.dart';
+
 
 class OrderSummaryScreen extends StatelessWidget {
   const OrderSummaryScreen({Key? key}) : super(key: key);
@@ -24,7 +26,6 @@ class OrderSummaryScreen extends StatelessWidget {
     // Generar un ID único para el pedido
     String orderId = FirebaseFirestore.instance.collection('orders').doc().id;
 
-    // Crear los datos del pedido
     Map<String, dynamic> orderData = {
       'id': orderId,
       'customerName': user.displayName ?? 'Cliente',
@@ -38,9 +39,34 @@ class OrderSummaryScreen extends StatelessWidget {
       'totalPrice': cartProvider.totalPrice,
       'loyaltyPoints': cartProvider.loyaltyPoints,
       'timestamp': FieldValue.serverTimestamp(),
+      'status': 'Pendiente',
     };
 
     await FirebaseFirestore.instance.collection('orders').doc(orderId).set(orderData);
+
+    for (var item in cartProvider.items) {
+      DocumentReference productRef = FirebaseFirestore.instance.collection('products').doc(item.product.id);
+
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(productRef);
+        if (!snapshot.exists) {
+          throw Exception("Producto no existe!");
+        }
+
+        Product product = Product.fromFirestore(snapshot);
+        if (item.variant.isNotEmpty) {
+          for (var variant in product.variants) {
+            if (variant.name == item.variant) {
+              variant.inventory -= item.quantity;
+            }
+          }
+        } else {
+          product.inventory -= item.quantity;
+        }
+
+        transaction.update(productRef, product.toJson());
+      });
+    }
 
     await userDocRef.set({
       'loyaltyPoints': currentLoyaltyPoints + cartProvider.loyaltyPoints,
@@ -82,7 +108,7 @@ class OrderSummaryScreen extends StatelessWidget {
                   return ListTile(
                     title: Text(cartItem.product.name),
                     subtitle: Text(
-                      'Variante: ${cartItem.variant}\nModificadores: ${cartItem.modifiers.map((modifier) => modifier.name).join(', ')}\nComentarios: ${cartItem.comments}\nCantidad: ${cartItem.quantity}',
+                      'Variante: ${cartItem.variant.isNotEmpty ? cartItem.variant : 'N/A'}\nModificadores: ${cartItem.modifiers.isNotEmpty ? cartItem.modifiers.map((modifier) => modifier.name).join(', ') : 'N/A'}\nComentarios: ${cartItem.comments.isNotEmpty ? cartItem.comments : 'N/A'}\nCantidad: ${cartItem.quantity}',
                     ),
                   );
                 },
@@ -94,6 +120,7 @@ class OrderSummaryScreen extends StatelessWidget {
                 data: 'Pedido: ${cartProvider.items.map((item) => item.product.name).join(', ')}',
                 version: QrVersions.auto,
                 size: 200.0,
+                backgroundColor: Colors.white,
               ),
             ),
             const SizedBox(height: 16),
