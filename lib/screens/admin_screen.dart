@@ -67,6 +67,9 @@ class _AdminScreenState extends State<AdminScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final Color iconColor = isDarkMode ? Colors.white : Colors.black;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Admin Screen'),
@@ -84,29 +87,29 @@ class _AdminScreenState extends State<AdminScreen> {
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.white),
+            icon: Icon(Icons.home, color: iconColor),
             activeIcon: Icon(Icons.home, color: Colors.amber),
             label: 'Inicio',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.inventory, color: Colors.white),
+            icon: Icon(Icons.inventory, color: iconColor),
             activeIcon: Icon(Icons.inventory, color: Colors.amber),
             label: 'Inventario',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart, color: Colors.white),
+            icon: Icon(Icons.bar_chart, color: iconColor),
             activeIcon: Icon(Icons.bar_chart, color: Colors.amber),
             label: 'Reportes',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings, color: Colors.white),
+            icon: Icon(Icons.settings, color: iconColor),
             activeIcon: Icon(Icons.settings, color: Colors.amber),
             label: 'Configuraciones',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_shipping, color: Colors.white),
+            icon: Icon(Icons.local_shipping, color: iconColor),
             activeIcon: Icon(Icons.local_shipping, color: Colors.amber),
             label: 'Pedidos',
           ),

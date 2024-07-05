@@ -8,7 +8,6 @@ import 'mas_screen.dart';
 import 'admin_screen.dart';
 import 'menu_screen.dart'; 
 
-
 class HomeScreen extends StatefulWidget {
   final bool isAdminView;
 
@@ -69,6 +68,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final Color iconColor = isDarkMode ? Colors.white : Colors.black;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
@@ -95,36 +97,35 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.white),
+            icon: Icon(Icons.home, color: iconColor),
             activeIcon: Icon(Icons.home, color: Colors.amber),
             label: 'Inicio',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.menu, color: Colors.white),
+            icon: Icon(Icons.menu, color: iconColor),
             activeIcon: Icon(Icons.menu, color: Colors.amber),
             label: 'Menú',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart, color: Colors.white),
+            icon: Icon(Icons.shopping_cart, color: iconColor),
             activeIcon: Icon(Icons.shopping_cart, color: Colors.amber),
             label: 'Mi Pedido',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt, color: Colors.white),
+            icon: Icon(Icons.list_alt, color: iconColor),
             activeIcon: Icon(Icons.list_alt, color: Colors.amber),
             label: 'Mis pedidos',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.more_horiz, color: Colors.white),
+            icon: Icon(Icons.more_horiz, color: iconColor),
             activeIcon: Icon(Icons.more_horiz, color: Colors.amber),
             label: 'Más',
           ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.black,
         onTap: _onItemTapped,
       ),
     );

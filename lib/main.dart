@@ -4,10 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cafeteriamaldonado_app_2/screens/admin_screen.dart';
 import 'package:cafeteriamaldonado_app_2/screens/home_screen.dart';
 import 'package:cafeteriamaldonado_app_2/screens/login_screen.dart';
-import 'package:cafeteriamaldonado_app_2/services/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:cafeteriamaldonado_app_2/providers/cart_provider.dart';
+import 'package:cafeteriamaldonado_app_2/services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +16,9 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
+  static _MyAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_MyAppState>();
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -37,6 +40,14 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future<void> _saveThemePreference(String theme) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('theme', theme);
+    setState(() {
+      _themeMode = _getThemeModeFromString(theme);
+    });
+  }
+
   ThemeMode _getThemeModeFromString(String theme) {
     switch (theme) {
       case 'light':
@@ -46,6 +57,10 @@ class _MyAppState extends State<MyApp> {
       default:
         return ThemeMode.system;
     }
+  }
+
+  void changeTheme(String theme) {
+    _saveThemePreference(theme);
   }
 
   @override
@@ -59,6 +74,8 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           primarySwatch: Colors.blue,
           brightness: Brightness.light,
+          iconTheme:
+              IconThemeData(color: Colors.black), // Íconos negros en modo claro
         ),
         darkTheme: ThemeData(
           brightness: Brightness.dark,
@@ -67,6 +84,8 @@ class _MyAppState extends State<MyApp> {
           appBarTheme: AppBarTheme(
             backgroundColor: Colors.grey[900],
           ),
+          iconTheme: IconThemeData(
+              color: Colors.white), // Íconos blancos en modo oscuro
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
             backgroundColor: Colors.grey[900],
             selectedItemColor: Colors.amber[800],
