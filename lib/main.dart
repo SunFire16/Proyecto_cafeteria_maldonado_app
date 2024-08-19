@@ -8,6 +8,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:cafeteriamaldonado_app_2/providers/cart_provider.dart';
 import 'package:cafeteriamaldonado_app_2/services/auth_service.dart';
+import 'package:cafeteriamaldonado_app_2/screens/friends_screen.dart';
+import 'package:cafeteriamaldonado_app_2/update_user_fields.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +32,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _loadThemePreference();
+    _checkAndUpdateUserFields();
   }
 
   Future<void> _loadThemePreference() async {
@@ -46,6 +49,10 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _themeMode = _getThemeModeFromString(theme);
     });
+  }
+
+  Future<void> _checkAndUpdateUserFields() async {
+    await updateUserFields(); // Llamar a la función para actualizar los campos del usuario
   }
 
   ThemeMode _getThemeModeFromString(String theme) {
@@ -93,7 +100,10 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         themeMode: _themeMode,
-        home: AuthenticationWrapper(),
+        home: const AuthenticationWrapper(),
+        routes: {
+          '/friends': (context) => const FriendsScreen(),
+        },
       ),
     );
   }
@@ -133,6 +143,8 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
             _currentUser = user;
             _isAdmin = isAdminUser;
           });
+          // Actualizar campos del usuario después de iniciar sesión
+          await updateUserFields();
         } else {
           setState(() {
             _currentUser = null;
@@ -152,9 +164,9 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
   @override
   Widget build(BuildContext context) {
     if (!_isAuthenticated || _currentUser == null) {
-      return LoginScreen();
+      return const LoginScreen();
     } else {
-      return _isAdmin ? AdminScreen() : HomeScreen();
+      return _isAdmin ? const AdminScreen() : const HomeScreen();
     }
   }
 }

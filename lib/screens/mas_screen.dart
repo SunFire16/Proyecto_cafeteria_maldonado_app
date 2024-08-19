@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'add_info_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cafeteriamaldonado_app_2/main.dart';
+import 'add_info_screen.dart';
+import 'login_screen.dart';
 
 class MasScreen extends StatefulWidget {
   const MasScreen({Key? key}) : super(key: key);
@@ -37,6 +39,40 @@ class _MasScreenState extends State<MasScreen> {
     MyApp.of(context)?.changeTheme(theme);
   }
 
+  Future<void> _signOut(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+
+  Future<void> _showSignOutDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmar cierre de sesión'),
+          content: const Text('¿Estás seguro de que deseas cerrar sesión? Necesitarás ingresar tu correo y contraseña para volver a acceder.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar el diálogo
+              },
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar el diálogo
+                _signOut(context); // Cerrar sesión
+              },
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +95,11 @@ class _MasScreenState extends State<MasScreen> {
                 MaterialPageRoute(builder: (context) => const ModifyProfileScreen()),
               );
             },
+          ),
+          ListTile(
+            title: const Text('Cerrar sesión'),
+            trailing: const Icon(Icons.logout),
+            onTap: () => _showSignOutDialog(context),
           ),
         ],
       ),

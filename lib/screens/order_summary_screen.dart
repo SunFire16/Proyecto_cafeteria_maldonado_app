@@ -6,7 +6,6 @@ import 'package:cafeteriamaldonado_app_2/providers/cart_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cafeteriamaldonado_app_2/models/product_model.dart';
 
-
 class OrderSummaryScreen extends StatelessWidget {
   const OrderSummaryScreen({Key? key}) : super(key: key);
 
@@ -23,22 +22,38 @@ class OrderSummaryScreen extends StatelessWidget {
         ? userDoc['totalSpent']
         : 0.0;
 
+    DateTime now = DateTime.now();
+
+    // Obtener el nombre completo del usuario
+    String customerName = '${userDoc['firstName']} ${userDoc['lastName']}';
+
     // Generar un ID único para el pedido
     String orderId = FirebaseFirestore.instance.collection('orders').doc().id;
 
     Map<String, dynamic> orderData = {
       'id': orderId,
-      'customerName': user.displayName ?? 'Cliente',
-      'items': cartProvider.items.map((item) => {
-        'product': item.product.toJson(),
-        'variant': item.variant,
-        'modifiers': item.modifiers.map((modifier) => modifier.toJson()).toList(),
-        'comments': item.comments,
-        'quantity': item.quantity,
+      'userId': user.uid,  // Añadir userId para referenciar al usuario
+      'customerName': customerName,
+      'customerEmail': user.email,  // Añadir correo electrónico del cliente
+      'items': cartProvider.items.map((item) {
+        Map<String, dynamic> productData = {
+          'product': item.product.toJson(),
+          'quantity': item.quantity,
+        };
+        if (item.variant.isNotEmpty) {
+          productData['variant'] = item.variant;
+        }
+        if (item.modifiers.isNotEmpty) {
+          productData['modifiers'] = item.modifiers.map((modifier) => modifier.toJson()).toList();
+        }
+        if (item.comments.isNotEmpty) {
+          productData['comments'] = item.comments;
+        }
+        return productData;
       }).toList(),
       'totalPrice': cartProvider.totalPrice,
       'loyaltyPoints': cartProvider.loyaltyPoints,
-      'timestamp': FieldValue.serverTimestamp(),
+      'timestamp': now,
       'status': 'Pendiente',
     };
 
@@ -71,6 +86,7 @@ class OrderSummaryScreen extends StatelessWidget {
     await userDocRef.set({
       'loyaltyPoints': currentLoyaltyPoints + cartProvider.loyaltyPoints,
       'totalSpent': totalSpent + cartProvider.totalPrice,
+      'lastPurchaseDate': now,  // Guardar la fecha de la última compra
     }, SetOptions(merge: true));
 
     cartProvider.clearCart();
@@ -85,6 +101,8 @@ class OrderSummaryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Colors.white : Colors.white;
 
     return Scaffold(
       appBar: AppBar(
@@ -95,20 +113,32 @@ class OrderSummaryScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Resumen del Pedido',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: cartProvider.items.length,
                 itemBuilder: (context, index) {
                   var cartItem = cartProvider.items[index];
                   return ListTile(
+                    leading: cartItem.product.imageUrl.isNotEmpty
+                        ? Image.network(
+                            cartItem.product.imageUrl,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          )
+                        : const Icon(Icons.image, size: 50),
                     title: Text(cartItem.product.name),
-                    subtitle: Text(
-                      'Variante: ${cartItem.variant.isNotEmpty ? cartItem.variant : 'N/A'}\nModificadores: ${cartItem.modifiers.isNotEmpty ? cartItem.modifiers.map((modifier) => modifier.name).join(', ') : 'N/A'}\nComentarios: ${cartItem.comments.isNotEmpty ? cartItem.comments : 'N/A'}\nCantidad: ${cartItem.quantity}',
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (cartItem.variant.isNotEmpty)
+                          Text('Variante: ${cartItem.variant}'),
+                        if (cartItem.modifiers.isNotEmpty)
+                          Text('Modificadores: ${cartItem.modifiers.map((modifier) => modifier.name).join(', ')}'),
+                        if (cartItem.comments.isNotEmpty)
+                          Text('Comentarios: ${cartItem.comments}'),
+                        Text('Cantidad: ${cartItem.quantity}'),
+                      ],
                     ),
                   );
                 },
@@ -120,7 +150,7 @@ class OrderSummaryScreen extends StatelessWidget {
                 data: 'Pedido: ${cartProvider.items.map((item) => item.product.name).join(', ')}',
                 version: QrVersions.auto,
                 size: 200.0,
-                backgroundColor: Colors.white,
+                backgroundColor: backgroundColor,
               ),
             ),
             const SizedBox(height: 16),

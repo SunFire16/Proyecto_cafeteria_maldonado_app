@@ -10,9 +10,6 @@ class MiPedidoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mi Pedido'),
-      ),
       body: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
           if (cartProvider.items.isEmpty) {
@@ -44,6 +41,14 @@ class MiPedidoScreen extends StatelessWidget {
               double itemTotalPrice = (cartItem.product.price + variantPrice + modifiersPrice) * cartItem.quantity;
 
               return ListTile(
+                leading: cartItem.product.imageUrl.isNotEmpty
+                    ? Image.network(
+                        cartItem.product.imageUrl,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      )
+                    : const Icon(Icons.image, size: 50),
                 title: Text(cartItem.product.name),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

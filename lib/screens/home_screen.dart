@@ -6,7 +6,8 @@ import 'login_screen.dart';
 import 'mi_pedido_screen.dart';
 import 'mas_screen.dart';
 import 'admin_screen.dart';
-import 'menu_screen.dart'; 
+import 'menu_screen.dart';
+import 'friends_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isAdminView;
@@ -21,7 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   late String userName = '';
   double loyaltyPoints = 0.0;
-  double totalSpent = 0.0;
+  int totalOrders = 0;
+  DateTime? lastPurchaseDate;
 
   final List<Widget> _screens = [
     const HomeContentScreen(),
@@ -47,7 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         userName = userData['firstName'];
         loyaltyPoints = userData['loyaltyPoints'] ?? 0.0;
-        totalSpent = userData['totalSpent'] ?? 0.0;
+        totalOrders = userData['totalOrders'] ?? 0;
+        if (userData['lastPurchaseDate'] != null) {
+          lastPurchaseDate = (userData['lastPurchaseDate'] as Timestamp).toDate();
+        }
       });
       Future.delayed(const Duration(milliseconds: 500), () {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -72,30 +77,34 @@ class _HomeScreenState extends State<HomeScreen> {
     final Color iconColor = isDarkMode ? Colors.white : Colors.black;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        actions: <Widget>[
-          if (widget.isAdminView) 
-            IconButton(
-              icon: const Icon(Icons.admin_panel_settings),
-              onPressed: () {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => const AdminScreen(),
-                ));
-              },
-            ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => const LoginScreen(),
-              ));
-            },
-          ),
-        ],
+      appBar: widget.isAdminView
+          ? AppBar(
+              title: const Text('Home'),
+              actions: <Widget>[
+                if (widget.isAdminView)
+                  IconButton(
+                    icon: const Icon(Icons.admin_panel_settings),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const AdminScreen(),
+                      ));
+                    },
+                  ),
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ));
+                  },
+                ),
+              ],
+            )
+          : null,
+      body: SafeArea(
+        child: _screens[_selectedIndex],
       ),
-      body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -158,7 +167,11 @@ class HomeContentScreen extends StatelessWidget {
         Map<String, dynamic> userData = snapshot.data!.data() as Map<String, dynamic>;
         String userName = userData['firstName'];
         double loyaltyPoints = userData['loyaltyPoints'] ?? 0.0;
-        double totalSpent = userData['totalSpent'] ?? 0.0;
+        int totalOrders = userData['totalOrders'] ?? 0;
+        DateTime? lastPurchaseDate;
+        if (userData['lastPurchaseDate'] != null) {
+          lastPurchaseDate = (userData['lastPurchaseDate'] as Timestamp).toDate();
+        }
 
         return ListView(
           padding: const EdgeInsets.all(16.0),
@@ -173,13 +186,16 @@ class HomeContentScreen extends StatelessWidget {
                     style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.shopping_bag),
-                      title: const Text('Última Compra'),
-                      subtitle: Text('L. ${userData['lastPurchaseAmount'] ?? 0.0}'),
+                  if (lastPurchaseDate != null)
+                    Card(
+                      child: ListTile(
+                        leading: const Icon(Icons.calendar_today),
+                        title: const Text('Última Compra'),
+                        subtitle: Text(
+                          'Fecha: ${lastPurchaseDate.toLocal().day}/${lastPurchaseDate.toLocal().month}/${lastPurchaseDate.toLocal().year}',
+                        ),
+                      ),
                     ),
-                  ),
                   Card(
                     child: ListTile(
                       leading: const Icon(Icons.loyalty),
@@ -189,9 +205,22 @@ class HomeContentScreen extends StatelessWidget {
                   ),
                   Card(
                     child: ListTile(
-                      leading: const Icon(Icons.show_chart),
-                      title: const Text('Total Gastado'),
-                      subtitle: Text('L. ${totalSpent.toStringAsFixed(2)}'),
+                      leading: const Icon(Icons.receipt_long),
+                      title: const Text('Total de Pedidos'),
+                      subtitle: Text('$totalOrders pedidos'),
+                    ),
+                  ),
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.people),
+                      title: const Text('Conéctate con amigos'),
+                      subtitle: const Text('Encuentra y haz amigos para donar puntos de lealtad.'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const FriendsScreen()),
+                        );
+                      },
                     ),
                   ),
                 ],
